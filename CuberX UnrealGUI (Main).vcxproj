@@ -142,8 +142,13 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CU Group.h" />
+    <ClInclude Include="CU SoundPlayer.h" />
     <ClInclude Include="CU Standard.h" />
     <ClInclude Include="CuberX UnrealGUI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="OldMain.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
