@@ -142,12 +142,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CU ARectFrame.h" />
-    <ClInclude Include="CU Basic.h" />
-    <ClInclude Include="CU MainWindow.h" />
-    <ClInclude Include="Cuber UnrealGUI.h" />
-    <ClInclude Include="CU AText.h" />
-    <ClInclude Include="CU FrameButton.h" />
+    <ClInclude Include="CU Group.h" />
+    <ClInclude Include="CU SoundPlayer.h" />
+    <ClInclude Include="CU Standard.h" />
+    <ClInclude Include="CuberX UnrealGUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
