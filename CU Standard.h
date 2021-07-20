@@ -6,7 +6,7 @@
 using namespace std;
 
 //版本
-string $CU_VERSION = "Main";
+string $CU_VERSION = "DEV-20210714 PRE2";
 
 //预声明
 namespace cuberx
@@ -38,6 +38,36 @@ namespace cuberx {
 		WindowSetting() {
 			w = 0;
 			h = 0;
+			//启动信息显示
+			WindowArea(128, 32);
+			Sleep(20);
+			PointJump(10, 0);
+			cout
+				<< "                                                                                                        " << endl
+				<< "                             ======              ==                              ======      ======     " << endl
+				<< "                           ===    ==             ==          =====     == =====    ====      ====       " << endl
+				<< "                          ===         ==    ==  ========   ==    ===  =====   ==     ====  ====         " << endl
+				<< "                          ===         ==    ==  ===   ===  ========    ==           ==========          " << endl
+				<< "                           ===    ==  ==    ==  ===   ===  ==      =   ==            ====  ====         " << endl
+				<< "                             ======    ======    =======     ======     =          ====      ====       " << endl
+				<< "                                                                                 ======      ======     " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        " << endl
+				<< "                                                                                                        "
+				;
+			PointJump(18, 35);
+			cout << "========= CuberX UnrealGUI (dev) =========";
+			PointJump(31, 0);
+			colorOut("VERSION  ", 8, 0);
+			colorOut($CU_VERSION, 8, 0);
+			PointJump(31,127);
+			Sleep(800);
+			system("cls");
 		}
 		//窗口大小
 		int WindowArea(short w, short h, bool ifcls = 0) {
@@ -105,8 +135,8 @@ namespace cuberx {
 			CursorInfo.bVisible = visible; //隐藏控制台光标
 			SetConsoleCursorInfo(handle, &CursorInfo);//设置控制台光标状态
 		}
-		
 	} winS;
+	//可以变量设置大小的数组（内存安全需注意）
 	template<class T>
 	class SuperArray
 	{
@@ -190,8 +220,9 @@ namespace cuberx {
 	//色彩信息
 	struct ColorInfo
 	{
-		int backGround = 0;
-		int font = 7;
+		//此处char是为了节省内存
+		char backGround = 0;
+		char font = 7;
 	};
 	//一个纯虚函数的包装
 	class CUFunction
@@ -343,7 +374,7 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		Base(string newText)
 		{
@@ -351,7 +382,7 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		Base(int width, int height, int x, int y)
 		{
@@ -362,7 +393,7 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		Base(int width, int height)
 		{
@@ -371,7 +402,7 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		Base(string newText, int width, int height, int x, int y)
 		{
@@ -383,7 +414,7 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		Base(string newText, int width, int height)
 		{
@@ -393,13 +424,9 @@ namespace cuberx {
 			canBeChosed = 0;
 			beChosed = 0;
 			visible = 1;
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
-		virtual void RUN_WHEN_BE_CREATED()
-		{
-			return;
-		}
-		virtual void draw()
+		virtual void draw(int offsetX = 0, int offsetY = 0)
 		{
 			return;
 		}
@@ -420,6 +447,10 @@ namespace cuberx {
 		{
 			text = newText;
 		}
+		virtual string getText()
+		{
+			return text;
+		}
 		virtual bool getVisible()
 		{
 			return visible;
@@ -437,10 +468,10 @@ namespace cuberx {
 		{
 			return size;
 		}
-		virtual void setLocation(int width, int height)
+		virtual void setLocation(int x, int y)
 		{
-			location.width = width;
-			location.height = height;
+			location.x = x;
+			location.y = y;
 		}
 		virtual Coordinate getLocation()
 		{
@@ -462,7 +493,7 @@ namespace cuberx {
 		//重置所属主窗口信息
 		virtual void resetFatherMainWindow()
 		{
-			fatherMainWindow = 0;
+			fatherMainWindow = nullptr;
 		}
 		//获取所属主窗口
 		virtual cuberx::MainWindow* getFatherMainWindow()
@@ -474,7 +505,8 @@ namespace cuberx {
 	//容器类
 	class Container : public cuberx::Base
 	{
-
+	protected:
+		int nowChosingObject;
 
 	public:
 		Container()
@@ -482,12 +514,14 @@ namespace cuberx {
 			text = " ";
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		Container(string newText)
 		{
 			text = newText;
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		Container(int width, int height, int x, int y)
 		{
@@ -497,6 +531,7 @@ namespace cuberx {
 			size.height = height;
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		Container(int width, int height)
 		{
@@ -504,6 +539,7 @@ namespace cuberx {
 			size.height = height;
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		Container(string newText, int width, int height, int x, int y)
 		{
@@ -514,6 +550,7 @@ namespace cuberx {
 			size.height = height;
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		Container(string newText, int width, int height)
 		{
@@ -522,6 +559,7 @@ namespace cuberx {
 			size.height = height;
 			canBeChosed = 0;
 			beChosed = 0;
+			nowChosingObject = 0;
 		}
 		virtual int add(cuberx::Base* newObject)
 		{
@@ -538,6 +576,15 @@ namespace cuberx {
 		virtual void remove(cuberx::Base& newObject)
 		{
 
+		}
+		virtual int getNowChosingObject()
+		{
+			return nowChosingObject;
+		}
+		//最好重写
+		virtual void setNowChosingObject(int newChosingObject)
+		{
+			nowChosingObject = newChosingObject;
 		}
 	};
 
@@ -572,6 +619,7 @@ namespace cuberx {
 		int nowChosingObject;//目前选择的CU组件(-1表示无)
 		cuberx::Base* objects[$CU_MAINWINDOW_TOTAL_OBJECTS_COUNT];
 		cuberx::CUTask tasks[$CU_MAINWINDOW_TOTAL_TASKS_COUNT];
+		thread* tickListenerThread;
 	public:
 
 		MainWindow()
@@ -591,6 +639,7 @@ namespace cuberx {
 			tickListenerMode = 2;
 			nowChosingObject = 0;
 			checkKey = 1;
+			tickListenerThread = nullptr;
 		}
 		MainWindow(string title, int new_size_width = 0, int new_size_height = 0, bool enable = 0) : Container(new_size_width, new_size_height)
 		{
@@ -609,6 +658,7 @@ namespace cuberx {
 				tasks[i].setIndex(i);
 			}
 			checkKey = 1;
+			tickListenerThread = nullptr;
 		}
 		MainWindow(int new_size_width, int new_size_height, bool enable = 0) : Container(new_size_width, new_size_height)
 		{
@@ -627,8 +677,16 @@ namespace cuberx {
 				tasks[i].setIndex(i);
 			}
 			checkKey = 1;
+			tickListenerThread = nullptr;
 		}
-
+		~MainWindow()
+		{
+			if (tickListenerThread != nullptr)
+			{
+				delete tickListenerThread;
+				tickListenerThread = nullptr;
+			}
+		}
 		//添加对象
 		int add(cuberx::Base* newObject)
 		{
@@ -779,7 +837,13 @@ namespace cuberx {
 				//根据useTickListener 启用帧率管理器线程
 				if (useTickListener)
 				{
+					if (this->tickListenerThread != nullptr)
+					{
+						delete this->tickListenerThread;
+						this->tickListenerThread = nullptr;
+					}
 					thread* tickListenerThread = new thread(tickListener, this);
+					this->tickListenerThread = tickListenerThread;
 					return tickListenerThread;
 				}
 
@@ -789,6 +853,7 @@ namespace cuberx {
 				setLastTestTickTime(0);
 				//显示光标
 				cuberx::winS.setCursorVisition(1);
+				
 			}
 			return 0;
 
@@ -1137,34 +1202,42 @@ namespace cuberx {
 		}
 
 
-		void draw()
+		void draw(int offsetX = 0, int offsetY = 0)
 		{
-			cuberx::winS.PointJump(location.y, location.x);
+			cuberx::winS.PointJump(location.y + offsetY, location.x + offsetX);
 			cout << frameChar[1];
 			for (int i = 0; i < size.width - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y, location.x + 1 + i);
+				cuberx::winS.PointJump(location.y + offsetY, location.x + 1 + i + offsetX);
 				cout << frameChar[5];
 			}
-			cuberx::winS.PointJump(location.y, location.x + size.width - 1);
+			cuberx::winS.PointJump(location.y + offsetY, location.x + size.width - 1 + offsetX);
 			cout << frameChar[2];
 
-			cuberx::winS.PointJump(location.y + size.height - 1, location.x);
+			cuberx::winS.PointJump(location.y + size.height - 1 + offsetY, location.x + offsetX);
 			cout << frameChar[3];
 			for (int i = 0; i < size.width - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y + size.height - 1, location.x + 1 + i);
+				cuberx::winS.PointJump(location.y + size.height - 1 + offsetY, location.x + 1 + i + offsetX);
 				cout << frameChar[5];
 			}
-			cuberx::winS.PointJump(location.y + size.height - 1, location.x + size.width - 1);
+			cuberx::winS.PointJump(location.y + size.height - 1 + offsetY, location.x + size.width - 1 + offsetX);
 			cout << frameChar[4];
 
 			for (int i = 0; i < size.y - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y + 1 + i, location.x);
+				cuberx::winS.PointJump(location.y + 1 + i + offsetY, location.x + offsetX);
 				cout << frameChar[6];
-				cuberx::winS.PointJump(location.y + 1 + i, location.x + size.width - 1);
+				cuberx::winS.PointJump(location.y + 1 + i + offsetY, location.x + size.width - 1 + offsetX);
 				cout << frameChar[6];
+			}
+			if (getFatherMainWindow() != nullptr)
+			{
+				winS.PointJump(getFatherMainWindow()->getSize().height - 1, getFatherMainWindow()->getSize().width - 1);
+			}
+			else
+			{
+				winS.PointJump(0, 0);
 			}
 		}
 
@@ -1212,11 +1285,18 @@ namespace cuberx {
 			size.width = width;
 			size.height = height;
 		}
-		void draw()
+		void draw(int offsetX = 0, int offsetY = 0)
 		{
-			cuberx::winS.PointJump(location.y, location.x);
+			cuberx::winS.PointJump(location.y + offsetY, location.x + offsetX);
 			cout << text;
-			cuberx::winS.PointJump(getFatherMainWindow()->getSize().y - 1, getFatherMainWindow()->getSize().x - 1);
+			if (getFatherMainWindow() != nullptr)
+			{
+				winS.PointJump(getFatherMainWindow()->getSize().height - 1, getFatherMainWindow()->getSize().width - 1);
+			}
+			else
+			{
+				winS.PointJump(0, 0);
+			}
 		}
 	};
 
@@ -1356,61 +1436,76 @@ namespace cuberx {
 			frameColorInfo = normalFrameColorInfo;
 			clickAction = 0;
 		}
-		void draw()
+		void draw(int offsetX = 0, int offsetY = 0)
 		{
-			cuberx::winS.PointJump(location.y, location.x);
+			cuberx::winS.PointJump(location.y + offsetY, location.x + offsetX);
 			winS.colorOut(frameChar[1], frameColorInfo.font, frameColorInfo.backGround);
 			for (int i = 0; i < size.width - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y, location.x + 1 + i);
+				cuberx::winS.PointJump(location.y + offsetY, location.x + offsetX + 1 + i);
 				winS.colorOut(frameChar[5], frameColorInfo.font, frameColorInfo.backGround);
 			}
-			cuberx::winS.PointJump(location.y, location.x + size.width - 1);
+			cuberx::winS.PointJump(location.y + offsetY, location.x + offsetX + size.width - 1);
 			winS.colorOut(frameChar[2], frameColorInfo.font, frameColorInfo.backGround);
 
-			cuberx::winS.PointJump(location.y + size.height - 1, location.x);
+			cuberx::winS.PointJump(location.y + offsetY + size.height - 1, location.x + offsetX);
 			winS.colorOut(frameChar[3], frameColorInfo.font, frameColorInfo.backGround);
 			for (int i = 0; i < size.width - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y + size.height - 1, location.x + 1 + i);
+				cuberx::winS.PointJump(location.y + offsetY + size.height - 1, location.x + offsetX + 1 + i);
 				winS.colorOut(frameChar[5], frameColorInfo.font, frameColorInfo.backGround);
 			}
-			cuberx::winS.PointJump(location.y + size.height - 1, location.x + size.width - 1);
+			cuberx::winS.PointJump(location.y + offsetY + size.height - 1, location.x + offsetX + size.width - 1);
 			winS.colorOut(frameChar[4], frameColorInfo.font, frameColorInfo.backGround);
 
 			for (int i = 0; i < size.y - 2; i++)
 			{
-				cuberx::winS.PointJump(location.y + 1 + i, location.x);
+				cuberx::winS.PointJump(location.y + offsetY + 1 + i, location.x + offsetX);
 				winS.colorOut(frameChar[6], frameColorInfo.font, frameColorInfo.backGround);
-				cuberx::winS.PointJump(location.y + 1 + i, location.x + size.width - 1);
+				cuberx::winS.PointJump(location.y + offsetY + 1 + i, location.x + offsetX + size.width - 1);
 				winS.colorOut(frameChar[6], frameColorInfo.font, frameColorInfo.backGround);
 			}
-			cuberx::winS.PointJump(location.y + 1, location.x + 2);
+			cuberx::winS.PointJump(location.y + offsetY + 1, location.x + offsetX + 2);
 			winS.colorOut(text, textColorInfo.font, textColorInfo.backGround);
 
-			cuberx::winS.PointJump(getFatherMainWindow()->getSize().height - 1, getFatherMainWindow()->getSize().width - 1);
+			if (getFatherMainWindow() != nullptr)
+			{
+				winS.PointJump(getFatherMainWindow()->getSize().height - 1, getFatherMainWindow()->getSize().width - 1);
+			}
+			else
+			{
+				winS.PointJump(0, 0);
+			}
 		}
 		void whenBeChosed()
 		{
-			//setTextColor(chosedTextColorInfo.backGround, chosedTextColorInfo.font);
-			//draw();
-			cuberx::MainWindow& fmw = *getFatherMainWindow();
-
-
-			//运行接口函数
-			fmw.setTask(fmw.getNewTask(), this, 1, $action2, 2);
-			fmw.setTask(fmw.getNewTask(), this, 1, $action3, 5);
+			if (getFatherMainWindow() != nullptr)
+			{
+				cuberx::MainWindow& fmw = *getFatherMainWindow();
+				//运行接口函数
+				fmw.setTask(fmw.getNewTask(), this, 1, $action2, 2);
+				fmw.setTask(fmw.getNewTask(), this, 1, $action3, 5);
+			}
+			else
+			{
+				setTextColor(15, 0);
+				draw();
+			}
 		}
 		void whenStopChosed()
 		{
-			//setTextColor(normalTextColorInfo.backGround, normalTextColorInfo.font);
-			//draw();
-			cuberx::MainWindow& fmw = *getFatherMainWindow();
-
-
-			//运行接口函数
-			fmw.setTask(fmw.getNewTask(), this, 1, $action, 4);
-			fmw.setTask(fmw.getNewTask(), this, 1, $action2, 8);
+			if (getFatherMainWindow() != nullptr)
+			{
+				cuberx::MainWindow& fmw = *getFatherMainWindow();
+				//运行接口函数
+				fmw.setTask(fmw.getNewTask(), this, 1, $action, 4);
+				fmw.setTask(fmw.getNewTask(), this, 1, $action2, 8);
+			}
+			else
+			{
+				setTextColor(normalTextColorInfo.backGround, normalTextColorInfo.font);
+				draw();
+			}	
 
 		}
 
@@ -1455,18 +1550,385 @@ namespace cuberx {
 
 
 				//运行接口函数
-				fmw.setTask(fmw.getNewTask(), this, 1, $action4, 2);
-
+				if (&fmw != nullptr) 
+				{ 
+					fmw.setTask(fmw.getNewTask(), this, 1, $action4, 2); 
+				}
 				if (&getClickAction() != 0)
 				{
 					getClickAction().func(this);
 				}
-				fmw.setTask(fmw.getNewTask(), this, 1, $action5, 35);
+				if (&fmw != nullptr)
+				{
+					fmw.setTask(fmw.getNewTask(), this, 1, $action5, 35);
+				}
 				return 1;
 			}
 
 			}
 			return 0;
+		}
+	};
+
+}
+
+//ClText 多彩文本
+#define $CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH 128
+namespace cuberx {
+
+	class CLText : public cuberx::Module
+	{
+	private:
+		cuberx::ColorInfo textColorInfo[$CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH];
+	public:
+		CLText()
+		{
+			for (int i = 0; i < $CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH; i++)
+			{
+				textColorInfo[i] = { 0,7 };
+			}
+		}
+		/*
+		 0 = 黑色	8 = 灰色
+		 1 = 蓝色	9 = 淡蓝色
+		 2 = 绿色	A = 淡绿色
+		 3 = 浅绿色	B = 淡浅绿色
+		 4 = 红色	C = 淡红色
+		 5 = 紫色	D = 淡紫色
+		 6 = 黄色	E = 淡黄色
+		 7 = 白色	F = 亮白色
+		*/
+		CLText(string text)
+		{
+			this->text = text;
+			for (int i = 0; i < $CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH; i++)
+			{
+				textColorInfo[i] = { 0,7 };
+			}
+		}
+		CLText(string text, string backGroundColorInfoString, string fontColorInfoString, int width = 5, int height = 1, int x = 0, int y = 0)
+		{
+			this->text = text;
+
+			//重置
+			for (int i = 0; i < $CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH; i++)
+			{
+				textColorInfo[i] = { 0,7 };
+			}
+			//读取并写入
+			for (int i = 0; i < backGroundColorInfoString.length(); i++)
+			{
+				switch (backGroundColorInfoString[i])
+				{
+				case '0':
+					textColorInfo[i].backGround = 0;
+					break;
+				case '1':
+					textColorInfo[i].backGround = 1;
+					break;
+				case '2':
+					textColorInfo[i].backGround = 2;
+					break;
+				case '3':
+					textColorInfo[i].backGround = 3;
+					break;
+				case '4':
+					textColorInfo[i].backGround = 4;
+					break;
+				case '5':
+					textColorInfo[i].backGround = 5;
+					break;
+				case '6':
+					textColorInfo[i].backGround = 6;
+					break;
+				case '7':
+					textColorInfo[i].backGround = 7;
+					break;
+				case '8':
+					textColorInfo[i].backGround = 8;
+					break;
+				case '9':
+					textColorInfo[i].backGround = 9;
+					break;
+				case 'A':
+				case 'a':
+					textColorInfo[i].backGround = 10;
+					break;
+				case 'B':
+				case 'b':
+					textColorInfo[i].backGround = 11;
+					break;
+				case 'C':
+				case 'c':
+					textColorInfo[i].backGround = 12;
+					break;
+				case 'D':
+				case 'd':
+					textColorInfo[i].backGround = 13;
+					break;
+				case 'E':
+				case 'e':
+					textColorInfo[i].backGround = 14;
+					break;
+				case 'F':
+				case 'f':
+					textColorInfo[i].backGround = 15;
+					break;
+				default:
+					break;
+				}
+			}
+			for (int i = 0; i < fontColorInfoString.length(); i++)
+			{
+				switch (fontColorInfoString[i])
+				{
+				case '0':
+					textColorInfo[i].font = 0;
+					break;
+				case '1':
+					textColorInfo[i].font = 1;
+					break;
+				case '2':
+					textColorInfo[i].font = 2;
+					break;
+				case '3':
+					textColorInfo[i].font = 3;
+					break;
+				case '4':
+					textColorInfo[i].font = 4;
+					break;
+				case '5':
+					textColorInfo[i].font = 5;
+					break;
+				case '6':
+					textColorInfo[i].font = 6;
+					break;
+				case '7':
+					textColorInfo[i].font = 7;
+					break;
+				case '8':
+					textColorInfo[i].font = 8;
+					break;
+				case '9':
+					textColorInfo[i].font = 9;
+					break;
+				case 'A':
+				case 'a':
+					textColorInfo[i].font = 10;
+					break;
+				case 'B':
+				case 'b':
+					textColorInfo[i].font = 11;
+					break;
+				case 'C':
+				case 'c':
+					textColorInfo[i].font = 12;
+					break;
+				case 'D':
+				case 'd':
+					textColorInfo[i].font = 13;
+					break;
+				case 'E':
+				case 'e':
+					textColorInfo[i].font = 14;
+					break;
+				case 'F':
+				case 'f':
+					textColorInfo[i].font = 15;
+					break;
+				default:
+					break;
+				}
+			}
+
+			setSize(width, height);
+			setLocation(x, y);
+		}
+		virtual void draw(int offsetX = 0, int offsetY = 0)
+		{
+			long long strLength = text.length();
+			string temp = "";
+			winS.PointJump(getLocation().y + offsetY, getLocation().x + offsetX);
+			for (long long i = 0; i < strLength; i++)
+			{
+				temp = text[i];
+				winS.colorOut(temp, textColorInfo[i].font, textColorInfo[i].backGround);
+			}
+			if (getFatherMainWindow() != nullptr)
+			{
+				winS.PointJump(getFatherMainWindow()->getSize().height - 1, getFatherMainWindow()->getSize().width - 1);
+			}
+			else
+			{
+				winS.PointJump(0, 0);
+			}
+		}
+
+		/*彩色输出
+		0 = 黑色 8 = 灰色
+		1 = 蓝色 9 = 淡蓝色
+		2 = 绿色 10 = 淡绿色
+		3 = 浅绿色 11 = 淡浅绿色
+		4 = 红色 12 = 淡红色
+		5 = 紫色 13 = 淡紫色
+		6 = 黄色 14 = 淡黄色
+		7 = 白色 15 = 亮白色
+		https://blog.csdn.net/qq_42885747/article/details/103835671?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control
+		*/
+		virtual void setTextColorInfo(string backGroundColorInfoString, string fontColorInfoString, bool ifResetAll = 0, bool ifChangeNow = 1)
+		{
+			//若变量ifResetAll为true(1)则重置
+			if (ifResetAll)
+			{
+				for (int i = 0; i < $CU_CLTEXT_TEXTCOLORINFO_MAX_LENGTH; i++)
+				{
+					textColorInfo[i] = { 0,7 };
+				}
+			}
+			//读取并写入
+			for (int i = 0; i < backGroundColorInfoString.length(); i++)
+			{
+				switch (backGroundColorInfoString[i])
+				{
+				case '0':
+					textColorInfo[i].backGround = 0;
+					break;
+				case '1':
+					textColorInfo[i].backGround = 1;
+					break;
+				case '2':
+					textColorInfo[i].backGround = 2;
+					break;
+				case '3':
+					textColorInfo[i].backGround = 3;
+					break;
+				case '4':
+					textColorInfo[i].backGround = 4;
+					break;
+				case '5':
+					textColorInfo[i].backGround = 5;
+					break;
+				case '6':
+					textColorInfo[i].backGround = 6;
+					break;
+				case '7':
+					textColorInfo[i].backGround = 7;
+					break;
+				case '8':
+					textColorInfo[i].backGround = 8;
+					break;
+				case '9':
+					textColorInfo[i].backGround = 9;
+					break;
+				case 'A':
+				case 'a':
+					textColorInfo[i].backGround = 10;
+					break;
+				case 'B':
+				case 'b':
+					textColorInfo[i].backGround = 11;
+					break;
+				case 'C':
+				case 'c':
+					textColorInfo[i].backGround = 12;
+					break;
+				case 'D':
+				case 'd':
+					textColorInfo[i].backGround = 13;
+					break;
+				case 'E':
+				case 'e':
+					textColorInfo[i].backGround = 14;
+					break;
+				case 'F':
+				case 'f':
+					textColorInfo[i].backGround = 15;
+					break;
+				case 'N':
+				case 'n':
+				{
+					ColorInfo normalColorInfo = { 0 , 7 };
+					textColorInfo[i].backGround = normalColorInfo.backGround;
+					break;
+				}
+				default:
+					break;
+				}
+			}
+			for (int i = 0; i < fontColorInfoString.length(); i++)
+			{
+				switch (fontColorInfoString[i])
+				{
+				case '0':
+					textColorInfo[i].font = 0;
+					break;
+				case '1':
+					textColorInfo[i].font = 1;
+					break;
+				case '2':
+					textColorInfo[i].font = 2;
+					break;
+				case '3':
+					textColorInfo[i].font = 3;
+					break;
+				case '4':
+					textColorInfo[i].font = 4;
+					break;
+				case '5':
+					textColorInfo[i].font = 5;
+					break;
+				case '6':
+					textColorInfo[i].font = 6;
+					break;
+				case '7':
+					textColorInfo[i].font = 7;
+					break;
+				case '8':
+					textColorInfo[i].font = 8;
+					break;
+				case '9':
+					textColorInfo[i].font = 9;
+					break;
+				case 'A':
+				case 'a':
+					textColorInfo[i].font = 10;
+					break;
+				case 'B':
+				case 'b':
+					textColorInfo[i].font = 11;
+					break;
+				case 'C':
+				case 'c':
+					textColorInfo[i].font = 12;
+					break;
+				case 'D':
+				case 'd':
+					textColorInfo[i].font = 13;
+					break;
+				case 'E':
+				case 'e':
+					textColorInfo[i].font = 14;
+					break;
+				case 'F':
+				case 'f':
+					textColorInfo[i].font = 15;
+					break;
+				case 'N':
+				case 'n':
+				{
+					ColorInfo normalColorInfo = { 0,7 };
+					textColorInfo[i].font = normalColorInfo.font;
+					break;
+				}
+				default:
+					break;
+				}
+			}
+			//立即绘制
+			if (ifChangeNow)
+			{
+				draw();
+			}
 		}
 	};
 
