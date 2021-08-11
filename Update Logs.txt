@@ -1,6 +1,12 @@
 CuberX UnrealGUI 更新日志 (标 ★ 的更新较为重要，标 ! 的表示最新版本仍存在的未修复漏洞)
 
 
+Beta 0.1.3 for MinGW
+	(2021/8/11)
+	建立了 ASwitch(开关按钮) 和 TextSwitch(带文字的开关按钮) 组件，并为其添加了丝滑的动画;
+	优化了一些内容;
+	为 MainWindow 添加了公开成员 returnInt ，可以使用任何子组件编辑，MainWindow 内部不会对其更改.
+	
 Beta 0.1.2
 	(2021/7/19)
 	修复了使用CU Stardand进行多文件编程会出现的重复定义现象，将头文件内所有变量/对象修改为静态型.
@@ -8,7 +14,7 @@ Beta 0.1.2
 
 Beta 0.1.1
 	(2021/7/18)
-	为 TextButton 和 FrameButton 的 setClickAction(设置点击时间) 方法增加了一个重载，允许以函数指针作为参数，满足使用者的需求.
+	为 TextButton 和 FrameButton 的 setClickAction(设置点击时间) 方法增加了一个重载，允许以函数指针或lambda表达式作为参数，满足使用者的需求.
 
 Beta 0.1★
 	(2021/7/15)
